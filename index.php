@@ -50,7 +50,7 @@
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link active" href="index.php">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="products.php">All Products</a></li>
-                
+                 <li class="nav-item"><a class="nav-link" href="about.php">About us</a></li>
                 <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
                 <li class="nav-item"><a class="btn btn-outline-success ms-lg-3" href="login.php">Login</a></li>
             </ul>
