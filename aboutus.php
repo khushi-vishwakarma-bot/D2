@@ -41,7 +41,11 @@
         <li>Fast Delivery</li>
     </ul>
 
+<head>
     <h3>📍 Our Story.</h3>
+
+    <h3>📍 Our Story</h3>
+
     <p>
         Desi Delight started as a small home kitchen with a big dream – 
         to share traditional flavors with everyone. Today, we proudly serve customers 
@@ -52,6 +56,6 @@
 <footer>
     <p>© 2026 Desi Delight | All Rights Reserved</p>
 </footer>
-
+<head/>
 </body>
 </html>
