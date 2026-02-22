@@ -7,7 +7,9 @@ include('db.php');
 // 1. Remove Item
 if (isset($_GET['remove'])) {
     $id = $_GET['remove'];
-    unset($_SESSION['cart'][$id]);
+    if (isset($_SESSION['cart'][$id])) {
+        unset($_SESSION['cart'][$id]);
+    }
     header("Location: cart.php");
     exit();
 }
@@ -22,13 +24,17 @@ if (isset($_GET['clear'])) {
 // 3. Update Quantity (Plus/Minus)
 if (isset($_GET['action']) && isset($_GET['id'])) {
     $id = $_GET['id'];
-    if ($_GET['action'] == 'add') {
-        $_SESSION['cart'][$id]['quantity'] += 1;
-    } elseif ($_GET['action'] == 'reduce') {
-        if ($_SESSION['cart'][$id]['quantity'] > 1) {
-            $_SESSION['cart'][$id]['quantity'] -= 1;
-        } else {
-            unset($_SESSION['cart'][$id]); // Remove if quantity hits 0
+    
+    // Check if item exists and is actually an array before updating
+    if (isset($_SESSION['cart'][$id]) && is_array($_SESSION['cart'][$id])) {
+        if ($_GET['action'] == 'add') {
+            $_SESSION['cart'][$id]['quantity'] += 1;
+        } elseif ($_GET['action'] == 'reduce') {
+            if ($_SESSION['cart'][$id]['quantity'] > 1) {
+                $_SESSION['cart'][$id]['quantity'] -= 1;
+            } else {
+                unset($_SESSION['cart'][$id]); 
+            }
         }
     }
     header("Location: cart.php");
@@ -47,13 +53,7 @@ $total_bill = 0;
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .product-name { font-weight: 600; color: #333; }
-        .qty-btn { 
-            width: 30px; 
-            height: 30px; 
-            padding: 0; 
-            line-height: 1; 
-            border-radius: 50%; 
-        }
+        .qty-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; }
         .card { border-radius: 15px; border: none; }
         .table thead { background-color: #f8f9fa; }
     </style>
@@ -72,7 +72,7 @@ $total_bill = 0;
         <div class="col-lg-12">
             <h2 class="fw-bold mb-4">Your Food Basket 🛒</h2>
 
-            <?php if (!empty($_SESSION['cart'])): ?>
+            <?php if (!empty($_SESSION['cart']) && is_array($_SESSION['cart'])): ?>
                 <div class="card shadow-sm overflow-hidden">
                     <div class="table-responsive">
                         <table class="table align-middle mb-0">
@@ -87,18 +87,23 @@ $total_bill = 0;
                             </thead>
                             <tbody>
                                 <?php foreach ($_SESSION['cart'] as $id => $item): 
-                                    $subtotal = $item['price'] * $item['quantity'];
+                                    // Validation check: if someone accidentally added bad data to session
+                                    if (!is_array($item) || !isset($item['price'])) continue;
+
+                                    $price = (float)$item['price'];
+                                    $qty = (int)$item['quantity'];
+                                    $subtotal = $price * $qty;
                                     $total_bill += $subtotal;
                                 ?>
                                 <tr>
                                     <td class="ps-4">
-                                        <span class="product-name"><?php echo htmlspecialchars($item['name']); ?></span>
+                                        <span class="product-name"><?php echo htmlspecialchars($item['name'] ?? 'Unknown Item'); ?></span>
                                     </td>
-                                    <td>₹<?php echo number_format($item['price'], 2); ?></td>
+                                    <td>₹<?php echo number_format($price, 2); ?></td>
                                     <td>
                                         <div class="d-flex justify-content-center align-items-center">
                                             <a href="cart.php?action=reduce&id=<?php echo $id; ?>" class="btn btn-outline-secondary qty-btn">-</a>
-                                            <span class="mx-3 fw-bold"><?php echo $item['quantity']; ?></span>
+                                            <span class="mx-3 fw-bold"><?php echo $qty; ?></span>
                                             <a href="cart.php?action=add&id=<?php echo $id; ?>" class="btn btn-outline-secondary qty-btn">+</a>
                                         </div>
                                     </td>
@@ -127,9 +132,7 @@ $total_bill = 0;
                 </div>
             <?php else: ?>
                 <div class="text-center py-5">
-                    <div class="mb-4">
-                        <span style="font-size: 4rem;">🥣</span>
-                    </div>
+                    <div class="mb-4"><span style="font-size: 4rem;">🥣</span></div>
                     <h3 class="fw-bold">Your cart is empty</h3>
                     <p class="text-muted mb-4">You haven't added any items to your cart yet.</p>
                     <a href="products.php" class="btn btn-success btn-lg px-5">Browse Homemade Food</a>
