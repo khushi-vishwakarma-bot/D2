@@ -1,6 +1,11 @@
 <?php
 session_start();
 include('db.php');
+//filter input
+$search = $_GET['search'] ?? '';
+$spice  = $_GET['spice'] ?? '';
+$custom = isset($_GET['custom']);
+$made   = isset($_GET['made']);
 
 // 1. Expanded Product Database (5 new items added per category)
 $products = [
@@ -22,7 +27,7 @@ $products = [
     // --- Homemade Snacks ---
     ["id" => 8, "name" => "Chakli", "cat" => "Homemade Snacks", "price" => 120, "weight" => "250g", "ing" => "Rice Flour, Gram Flour, Butter", "shelf" => "2 Months", "storage" => "Keep in airtight jar."],
     ["id" => 9, "name" => "Namak Para", "cat" => "Homemade Snacks", "price" => 90, "weight" => "250g", "ing" => "Refined Flour, Carom Seeds, Ghee", "shelf" => "3 Months", "storage" => "Store in a dry place."],
-    ["id" => 10, "name" => "Banana Chips", "cat" => "Homemade Snacks", "price" => 100, "weight" => "250g", "ing" => "Raw Banana, Coconut Oil, Salt", "shelf" => "3 Months", "storage" => "Seal immediately after use."],
+    ["id" => 10, "name" => "Banana Chips", "cat" => "Homemade Snacks", "price" => 100, "weight" => "250g", "ing" => "Raw Banana, Coconut Oil, Salt", "shelf" => "3 Months", "storage" => "Seal immediately after use.],
     ["id" => 11, "name" => "Murukku", "cat" => "Homemade Snacks", "price" => 110, "weight" => "250g", "ing" => "Rice Flour, Urad Dal, Sesame", "shelf" => "2 Months", "storage" => "Keep away from moisture."],
     ["id" => 12, "name" => "Thepla Chips", "cat" => "Homemade Snacks", "price" => 130, "weight" => "200g", "ing" => "Wheat Flour, Methi, Spices", "shelf" => "2 Months", "storage" => "Store in a cool place."],
     // New Snacks
@@ -129,6 +134,7 @@ $current_cat = $_GET['category'] ?? 'All';
 <body class="bg-light">
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-success sticky-nav shadow-sm">
+<a href="wishlist.php">❤️ Wishlist</a>
     <div class="container">
         <a class="navbar-brand fw-bold" href="index.php">DesiDelight</a>
         <div class="d-flex align-items-center">
@@ -191,6 +197,25 @@ $current_cat = $_GET['category'] ?? 'All';
                             <input type="hidden" name="product_price" value="<?php echo $p['price']; ?>">
                             <button type="submit" name="add_to_cart" class="btn btn-success w-100 btn-sm py-2 fw-bold">Add to Cart</button>
                         </form>
+                        <div class="card-body p-0 d-flex flex-column">
+    ...
+    <form method="POST" action="">
+        <input type="hidden" name="product_id" value="<?php echo $p['id']; ?>">
+        <input type="hidden" name="product_name" value="<?php echo $p['name']; ?>">
+        <input type="hidden" name="product_price" value="<?php echo $p['price']; ?>">
+        <button type="submit" name="add_to_cart" class="btn btn-success w-100 btn-sm py-2 fw-bold">Add to Cart</button>
+    </form>
+
+    <!-- Wishlist button -->
+    <form method="POST" action="add_to_wishlist.php">
+        <input type="hidden" name="product_id" value="<?php echo $p['id']; ?>">
+        <input type="hidden" name="product_name" value="<?php echo $p['name']; ?>">
+        <input type="hidden" name="product_price" value="<?php echo $p['price']; ?>">
+        <button type="submit" name="add_to_wishlist" class="btn btn-danger w-100 btn-sm py-2 fw-bold mt-2">
+            ❤️ Add to Wishlist
+        </button>
+    </form>
+</div>
                     </div>
                 </div>
             </div>
